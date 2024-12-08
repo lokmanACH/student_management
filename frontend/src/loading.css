@@ -1,0 +1,6 @@
+.loadingContent {
+  width: fit-content;
+  height: fit-content;
+  position: fixed;
+  z-index: 9999;
+}

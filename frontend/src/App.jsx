@@ -8,6 +8,11 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
 import Grid from "@mui/material/Grid2";
 import Students from "./components/students/students";
+import Speciality from "./components/specialty/speciality";
+import FinalResult from "./components/finaleResult/finalResult";
+import Loading from "./loading";
+import Alerts from "./alert";
+import { getRequest } from "../API/request";
 
 const NAVIGATION = [
   {
@@ -59,15 +64,27 @@ function useDemoRouter(initialPath) {
   return router;
 }
 
-const Skeleton = styled("div")(({ theme, height }) => ({
-  backgroundColor: theme.palette.action.hover,
-  borderRadius: theme.shape.borderRadius,
-  height,
-  content: '" "',
-}));
-
 export default function App(props) {
-  const { window } = props;
+  const { window, changeAlert, changeLoading } = props;
+  const [data, setData] = React.useState({});
+  const changeData = (dt) => {
+    setData(dt);
+  };
+  React.useEffect(() => {
+    const doAsyncFunc = async () => {
+      //
+      const res = await getRequest(`/student/all`);
+      const resSpec = await getRequest(`/speciality/all`);
+      if (res.status == 200 && resSpec.status == 200) {
+        changeData({
+          students: res.result,
+          speciality: resSpec.result,
+        });
+      }
+    };
+
+    doAsyncFunc();
+  }, [/*data*/]);
 
   const router = useDemoRouter("/students");
   // Remove this const when copying and pasting into your project.
@@ -76,67 +93,74 @@ export default function App(props) {
   switch (router.pathname) {
     case "/students":
       return (
-        <AppProvider
-          navigation={NAVIGATION}
-          router={router}
-          theme={demoTheme}
-          window={demoWindow}
-        >
-          <DashboardLayout>
-            <PageContainer>
-              <Students />
-            </PageContainer>
-          </DashboardLayout>
-        </AppProvider>
+        <>
+          <AppProvider
+            navigation={NAVIGATION}
+            router={router}
+            theme={demoTheme}
+            window={demoWindow}
+          >
+            <DashboardLayout>
+              <PageContainer>
+                <Students
+                  changeAlert={changeAlert}
+                  changeLoading={changeLoading}
+                  data={data}
+                  changeData={changeData}
+                />
+              </PageContainer>
+            </DashboardLayout>
+          </AppProvider>
+        </>
       );
       break;
 
     case "/specialty":
-            return (
-              <AppProvider
-                navigation={NAVIGATION}
-                router={router}
-                theme={demoTheme}
-                window={demoWindow}
-              >
-                <DashboardLayout>
-                  <PageContainer>
-                    <Students />
-                  </PageContainer>
-                </DashboardLayout>
-              </AppProvider>
-            );
+      return (
+        <>
+          <AppProvider
+            navigation={NAVIGATION}
+            router={router}
+            theme={demoTheme}
+            window={demoWindow}
+          >
+            <DashboardLayout>
+              <PageContainer>
+                <Speciality
+                  changeAlert={changeAlert}
+                  changeLoading={changeLoading}
+                  data={data}
+                  changeData={changeData}
+                />
+              </PageContainer>
+            </DashboardLayout>
+          </AppProvider>
+        </>
+      );
       break;
 
     case "/final-results":
-            return (
-              <AppProvider
-                navigation={NAVIGATION}
-                router={router}
-                theme={demoTheme}
-                window={demoWindow}
-              >
-                <DashboardLayout>
-                  <PageContainer>
-                    <Students />
-                  </PageContainer>
-                </DashboardLayout>
-              </AppProvider>
-            );
+      return (
+        <>
+          <AppProvider
+            navigation={NAVIGATION}
+            router={router}
+            theme={demoTheme}
+            window={demoWindow}
+          >
+            <DashboardLayout>
+              <PageContainer>
+                <FinalResult
+                  changeAlert={changeAlert}
+                  changeLoading={changeLoading}
+                  data={data}
+                  changeData={changeData}
+                />
+              </PageContainer>
+            </DashboardLayout>
+          </AppProvider>
+        </>
+      );
       break;
   }
-  // return (
-  //   <AppProvider
-  //     navigation={NAVIGATION}
-  //     router={router}
-  //     theme={demoTheme}
-  //     window={demoWindow}
-  //   >
-  //     <DashboardLayout>
-  //       <PageContainer>
-  //         <h1>i don't know</h1>
-  //       </PageContainer>
-  //     </DashboardLayout>
-  //   </AppProvider>
-  // );
 }

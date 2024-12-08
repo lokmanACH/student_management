@@ -1,0 +1,27 @@
+.alertContainer {
+  position: fixed;
+  width: 50%;
+  margin-left: 25%;
+  height: fit-content;
+  background-color: transparent;
+  z-index: 9999;
+  animation-name: show;
+  animation-duration: 0.5s;
+}
+@keyframes show {
+  from {
+    opacity: 0%;
+    margin-top: 20vh;
+  }
+
+  to {
+    margin-top: 0vh;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .alertContainer {
+    width: 100%;
+    margin-left: 0%;
+  }
+}

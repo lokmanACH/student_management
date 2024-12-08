@@ -15,39 +15,28 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import EditIcon from "@mui/icons-material/Edit";
 import Tooltip from "@mui/material/Tooltip";
+import DeleteIcon from "@mui/icons-material/Delete";
 import SearchBar from "../searchBar/searchBar";
 import AddStudent from "../addStudent/addStudent";
 import EditStudentModal from "../mod/editStudentModal";
 import EditSpecialty from "../mod/editSpecialty";
 import "./student.css";
-
-function createData(name, calories, fat, carbs, protein, price) {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history: [
-      {
-        date: "2020-01-05",
-        customerId: "11091700",
-        amount: 3,
-      },
-      {
-        date: "2020-01-02",
-        customerId: "Anonymous",
-        amount: 1,
-      },
-    ],
-  };
-}
+import { getSpecialtyByNum } from "../../../func/filterSpecialitys";
+import { deleteRequest } from "../../../API/request";
+// /student/2121.../delete
 
 function Row(props) {
-  const { row, handleOpen, handleOpen2 } = props;
-  const [open, setOpen] = React.useState(false);
+  const {
+    row,
+    handleOpen,
+    handleOpen2,
+    changeAlert,
+    changeLoading,
+    data,
+    changeData,
+  } = props;
 
+  const [open, setOpen] = React.useState(false);
   return (
     <React.Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
@@ -61,17 +50,48 @@ function Row(props) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.name}
+          {row.nom} {row.prenom}
         </TableCell>
-        <TableCell align="right">{row.calories}</TableCell>
-        <TableCell align="right">{row.fat}</TableCell>
-        <TableCell align="right">{row.carbs}</TableCell>
-        <TableCell align="right">{row.protein}</TableCell>
+        <TableCell align="right">{row.moyS1}</TableCell>
+        <TableCell align="right">{row.moyS2}</TableCell>
+        <TableCell align="right">{row.moyS3}</TableCell>
+        <TableCell align="right">{row.moyS4}</TableCell>
         <TableCell align="center">
           {
             <Tooltip title="Edit">
-              <IconButton onClick={handleOpen}>
+              <IconButton
+                onClick={async () => {
+                  data.uid = row.numE;
+                  await changeData(data);
+                  handleOpen();
+                }}
+              >
                 <EditIcon />
+              </IconButton>
+            </Tooltip>
+          }
+        </TableCell>
+
+        <TableCell align="center">
+          {
+            <Tooltip
+              title="Edit"
+              onClick={async () => {
+                changeLoading(true);
+                const res = await deleteRequest(
+                  `/student/${row.numE}/delete`,
+                  null
+                );
+                if (res.status == 200) {
+                  changeAlert(true, "success");
+                } else {
+                  changeAlert(true, "filled");
+                }
+                changeLoading(false);
+              }}
+            >
+              <IconButton>
+                <DeleteIcon />
               </IconButton>
             </Tooltip>
           }
@@ -93,25 +113,34 @@ function Row(props) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
-                      <TableCell align="left">
-                        {historyRow.customerId}
-                      </TableCell>
-                      <TableCell align="left" component="th" scope="row">
-                        {historyRow.date}
-                      </TableCell>
-                      <TableCell align="left">
-                        {
-                          <Tooltip title="Edit">
-                            <IconButton onClick={handleOpen2}>
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                        }
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {row.choices
+                    .sort((a, b) => a.ordreChoix - b.ordreChoix)
+                    .map((e) => (
+                      <TableRow key={e?.numSpec ?? null}>
+                        <TableCell align="left">
+                          Choice Number : {e?.ordreChoix ?? null}
+                        </TableCell>
+                        <TableCell align="left" component="th" scope="row">
+                          {getSpecialtyByNum(
+                            data?.speciality ?? null,
+                            e?.numSpec ?? null
+                          )?.nomSpec ?? null}
+                        </TableCell>
+                        <TableCell align="left">
+                          {
+                            <Tooltip title="Edit">
+                              <IconButton
+                                onClick={() => {
+                                  handleOpen2();
+                                }}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                          }
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </Box>
@@ -141,25 +170,8 @@ Row.propTypes = {
   }).isRequired,
 };
 
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0, 3.99),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3, 4.99),
-  createData("Eclair", 262, 16.0, 24, 6.0, 3.79),
-  createData("Cupcake", 305, 3.7, 67, 4.3, 2.5),
-  createData("Gingerbread", 356, 16.0, 49, 3.9, 1.5),
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0, 3.99),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3, 4.99),
-  createData("Eclair", 262, 16.0, 24, 6.0, 3.79),
-  createData("Cupcake", 305, 3.7, 67, 4.3, 2.5),
-  createData("Gingerbread", 356, 16.0, 49, 3.9, 1.5),
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0, 3.99),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3, 4.99),
-  createData("Eclair", 262, 16.0, 24, 6.0, 3.79),
-  createData("Cupcake", 305, 3.7, 67, 4.3, 2.5),
-  createData("Gingerbread", 356, 16.0, 49, 3.9, 1.5),
-];
-
-export default function Students() {
+export default function Students(props) {
+  const { changeAlert, changeLoading, data, changeData } = props;
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -172,7 +184,12 @@ export default function Students() {
     <>
       <div className="upTable">
         <SearchBar />
-        <AddStudent />
+        <AddStudent
+          changeAlert={changeAlert}
+          changeLoading={changeLoading}
+          data={data}
+          changeData={changeData}
+        />
         <div className="addButton"></div>
       </div>
       <TableContainer component={Paper}>
@@ -186,22 +203,38 @@ export default function Students() {
               <TableCell align="right">3rd Semester</TableCell>
               <TableCell align="right">4th Semester</TableCell>
               <TableCell align="center">Edit</TableCell>
+              <TableCell align="center">Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <Row
-                key={row.name}
-                row={row}
-                handleOpen={handleOpen}
-                handleOpen2={handleOpen2}
-              />
-            ))}
+            {data?.students &&
+              data?.students.map((row) => (
+                <Row
+                  key={row.numE}
+                  row={row}
+                  handleOpen={handleOpen}
+                  handleOpen2={handleOpen2}
+                  changeAlert={changeAlert}
+                  changeLoading={changeLoading}
+                  data={data}
+                  changeData={changeData}
+                />
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <EditStudentModal open={open} handleClose={handleClose} />
+      <EditStudentModal
+        open={open}
+        handleClose={handleClose}
+        uid={data.uid}
+        changeAlert={changeAlert}
+        changeLoading={changeLoading}
+      />
       <EditSpecialty open={open2} handleClose={handleClose2} />
     </>
   );
 }
+
+// numE: 1
+// numSpec: 1
+// ordreChoix: 3

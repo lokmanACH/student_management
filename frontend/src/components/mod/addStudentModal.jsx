@@ -13,6 +13,7 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import { postRequest } from "../../../API/request";
 
 const style = {
   position: "absolute",
@@ -26,29 +27,23 @@ const style = {
   p: 4,
 };
 
-const currencies = [
-  {
-    value: "gl",
-    label: "GL",
-  },
-  {
-    value: "ti",
-    label: "TI",
-  },
-  {
-    value: "sci",
-    label: "SCI",
-  },
-  {
-    value: "si",
-    label: "SI",
-  },
-];
+export default function AddStudentModal({
+  open,
+  handleClose,
+  changeAlert,
+  changeLoading,
+  data,
+  changeData,
+}) {
+  const [dataSet, setData] = React.useState({});
+  const currencies =
+    data?.speciality?.map((spec) => ({
+      value: spec.numSpec,
+      label: spec?.nomSpec?.toUpperCase() ?? null,
+    })) || [];
 
-export default function AddStudentModal({ open, handleClose }) {
   return (
     <div>
-      {/* <Button onClick={handleOpen}>Open modal</Button> */}
       <Modal
         open={open}
         onClose={handleClose}
@@ -59,15 +54,36 @@ export default function AddStudentModal({ open, handleClose }) {
           <Box sx={{ "& > :not(style)": { m: 1 } }}>
             <FormControl variant="standard">
               <InputLabel htmlFor="input-with-icon-adornment">
-                First Name
+                Student UID
               </InputLabel>
               <Input
                 id="input-with-icon-adornment"
+                type="number"
                 startAdornment={
                   <InputAdornment position="start">
                     <BadgeIcon />
                   </InputAdornment>
                 }
+                required
+                onChange={(e) => {
+                  dataSet.uid = e.target.value;
+                  setData(dataSet);
+                }}
+              />
+            </FormControl>
+          </Box>
+          <Box sx={{ "& > :not(style)": { m: 1 } }}>
+            <FormControl variant="standard">
+              <InputLabel htmlFor="input-with-icon-adornment">
+                First Name
+              </InputLabel>
+              <Input
+                id="input-with-icon-adornment"
+                required
+                onChange={(e) => {
+                  dataSet.firstName = e.target.value;
+                  setData(dataSet);
+                }}
               />
             </FormControl>
 
@@ -77,11 +93,10 @@ export default function AddStudentModal({ open, handleClose }) {
               </InputLabel>
               <Input
                 id="input-with-icon-adornment"
-                startAdornment={
-                  <InputAdornment position="start">
-                    <BadgeIcon />
-                  </InputAdornment>
-                }
+                onChange={(e) => {
+                  dataSet.lastName = e.target.value;
+                  setData(dataSet);
+                }}
               />
             </FormControl>
 
@@ -99,6 +114,10 @@ export default function AddStudentModal({ open, handleClose }) {
                   type="number"
                   inputProps={{ min: 0, max: 20, step: 1 }}
                   sx={{ width: "200px" }}
+                  onChange={(e) => {
+                    dataSet.firstMark = e.target.value;
+                    setData(dataSet);
+                  }}
                 />
 
                 <TextField
@@ -108,6 +127,10 @@ export default function AddStudentModal({ open, handleClose }) {
                   type="number"
                   inputProps={{ min: 0, max: 20, step: 1 }}
                   sx={{ width: "200px" }}
+                  onChange={(e) => {
+                    dataSet.secondMark = e.target.value;
+                    setData(dataSet);
+                  }}
                 />
 
                 <TextField
@@ -117,6 +140,10 @@ export default function AddStudentModal({ open, handleClose }) {
                   type="number"
                   inputProps={{ min: 0, max: 20, step: 1 }}
                   sx={{ width: "200px" }}
+                  onChange={(e) => {
+                    dataSet.thirdMark = e.target.value;
+                    setData(dataSet);
+                  }}
                 />
 
                 <TextField
@@ -126,6 +153,10 @@ export default function AddStudentModal({ open, handleClose }) {
                   type="number"
                   inputProps={{ min: 0, max: 20, step: 1 }}
                   sx={{ width: "200px" }}
+                  onChange={(e) => {
+                    dataSet.fourthMark = e.target.value;
+                    setData(dataSet);
+                  }}
                 />
               </div>
             </Box>
@@ -146,6 +177,10 @@ export default function AddStudentModal({ open, handleClose }) {
                   defaultValue="EUR"
                   helperText="Please select your specialty"
                   variant="standard"
+                  onChange={(e) => {
+                    dataSet.firstChoice = e.target.value;
+                    setData(dataSet);
+                  }}
                 >
                   {currencies.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -161,6 +196,10 @@ export default function AddStudentModal({ open, handleClose }) {
                   defaultValue="EUR"
                   helperText="Please select your specialty"
                   variant="standard"
+                  onChange={(e) => {
+                    dataSet.secondChoice = e.target.value;
+                    setData(dataSet);
+                  }}
                 >
                   {currencies.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -176,6 +215,10 @@ export default function AddStudentModal({ open, handleClose }) {
                   defaultValue="EUR"
                   helperText="Please select your specialty"
                   variant="standard"
+                  onChange={(e) => {
+                    dataSet.thirdChoice = e.target.value;
+                    setData(dataSet);
+                  }}
                 >
                   {currencies.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -191,6 +234,10 @@ export default function AddStudentModal({ open, handleClose }) {
                   defaultValue="EUR"
                   helperText="Please select your specialty"
                   variant="standard"
+                  onChange={(e) => {
+                    dataSet.fourthChoice = e.target.value;
+                    setData(dataSet);
+                  }}
                 >
                   {currencies.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -203,8 +250,75 @@ export default function AddStudentModal({ open, handleClose }) {
           </Box>
 
           <Stack direction="row" spacing={2}>
-            <Button color="error" onClick={handleClose}>Cancel</Button>
-            <Button variant="contained" color="primary">
+            <Button color="error" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={async () => {
+                changeLoading(true);
+                try {
+                  if (
+                    dataSet.uid &&
+                    dataSet.firstName &&
+                    dataSet.lastName &&
+                    dataSet.firstMark &&
+                    dataSet.secondMark &&
+                    dataSet.thirdMark &&
+                    dataSet.fourthMark &&
+                    dataSet.firstChoice &&
+                    dataSet.secondChoice &&
+                    dataSet.thirdChoice &&
+                    dataSet.fourthChoice
+                  ) {
+                    const res = await postRequest("/student/add", {
+                      numE: dataSet.uid,
+                      nom: dataSet.firstName,
+                      prenom: dataSet.lastName,
+                      moyS1: dataSet.firstMark,
+                      moyS2: dataSet.secondMark,
+                      moyS3: dataSet.thirdMark,
+                      moyS4: dataSet.fourthMark,
+                    });
+
+                    if (res.status == 200) {
+                      changeAlert(true, "success");
+                      await postRequest("/choice/addAll", [
+                        {
+                          numE: dataSet.uid,
+                          numSpec: Number(dataSet.firstChoice),
+                          ordreChoix: 1,
+                        },
+                        {
+                          numE: dataSet.uid,
+                          numSpec: Number(dataSet.secondChoice),
+                          ordreChoix: 2,
+                        },
+                        {
+                          numE: dataSet.uid,
+                          numSpec: Number(dataSet.thirdChoice),
+                          ordreChoix: 3,
+                        },
+                        {
+                          numE: dataSet.uid,
+                          numSpec: Number(dataSet.fourthChoice),
+                          ordreChoix: 4,
+                        },
+                      ]);
+                    } else {
+                      changeAlert(true, "filled");
+                    }
+                  } else {
+                    changeAlert(true, "warning");
+                  }
+                } catch (err) {
+                  console.log(err);
+                }
+                handleClose();
+                changeLoading(false);
+              }}
+            >
               submit
             </Button>
           </Stack>

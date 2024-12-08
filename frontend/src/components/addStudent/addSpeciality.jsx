@@ -2,13 +2,9 @@ import * as React from "react";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import AddStudentModal from "../mod/addStudentModal";
+import AddSpecialityModal from "../mod/addSpecialityModal";
 
-export default function AddStudent({
-  changeAlert,
-  changeLoading,
-  data,
-  changeData,
-}) {
+export default function AddSpeciality() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -22,16 +18,9 @@ export default function AddStudent({
         startIcon={<AddIcon />}
         onClick={handleOpen}
       >
-        Add New Student
+        Add New Speciality
       </Button>
-      <AddStudentModal
-        open={open}
-        handleClose={handleClose}
-        changeAlert={changeAlert}
-        changeLoading={changeLoading}
-        data={data}
-        changeData={changeData}
-      />
+      <AddSpecialityModal open={open} handleClose={handleClose} />
     </>
   );
 }

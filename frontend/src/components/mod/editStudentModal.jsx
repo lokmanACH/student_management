@@ -9,6 +9,7 @@ import TextField from "@mui/material/TextField";
 import BadgeIcon from "@mui/icons-material/Badge";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import { putRequest } from "../../../API/request";
 
 const style = {
   position: "absolute",
@@ -22,9 +23,14 @@ const style = {
   p: 4,
 };
 
-
-
-export default function EditStudentModal({ open, handleClose }) {
+export default function EditStudentModal({
+  open,
+  handleClose,
+  uid,
+  changeAlert,
+  changeLoading,
+}) {
+  const [dataSet, setData] = React.useState({});
   return (
     <div>
       {/* <Button onClick={handleOpen}>Open modal</Button> */}
@@ -47,6 +53,10 @@ export default function EditStudentModal({ open, handleClose }) {
                     <BadgeIcon />
                   </InputAdornment>
                 }
+                onChange={(e) => {
+                  dataSet.firstName = e.target.value;
+                  setData(dataSet);
+                }}
               />
             </FormControl>
 
@@ -61,6 +71,10 @@ export default function EditStudentModal({ open, handleClose }) {
                     <BadgeIcon />
                   </InputAdornment>
                 }
+                onChange={(e) => {
+                  dataSet.lastName = e.target.value;
+                  setData(dataSet);
+                }}
               />
             </FormControl>
 
@@ -78,6 +92,10 @@ export default function EditStudentModal({ open, handleClose }) {
                   type="number"
                   inputProps={{ min: 0, max: 20, step: 1 }}
                   sx={{ width: "200px" }}
+                  onChange={(e) => {
+                    dataSet.firstMark = e.target.value;
+                    setData(dataSet);
+                  }}
                 />
 
                 <TextField
@@ -87,6 +105,10 @@ export default function EditStudentModal({ open, handleClose }) {
                   type="number"
                   inputProps={{ min: 0, max: 20, step: 1 }}
                   sx={{ width: "200px" }}
+                  onChange={(e) => {
+                    dataSet.secondMark = e.target.value;
+                    setData(dataSet);
+                  }}
                 />
 
                 <TextField
@@ -96,6 +118,10 @@ export default function EditStudentModal({ open, handleClose }) {
                   type="number"
                   inputProps={{ min: 0, max: 20, step: 1 }}
                   sx={{ width: "200px" }}
+                  onChange={(e) => {
+                    dataSet.thirdMark = e.target.value;
+                    setData(dataSet);
+                  }}
                 />
 
                 <TextField
@@ -105,6 +131,10 @@ export default function EditStudentModal({ open, handleClose }) {
                   type="number"
                   inputProps={{ min: 0, max: 20, step: 1 }}
                   sx={{ width: "200px" }}
+                  onChange={(e) => {
+                    dataSet.fourthMark = e.target.value;
+                    setData(dataSet);
+                  }}
                 />
               </div>
             </Box>
@@ -114,7 +144,45 @@ export default function EditStudentModal({ open, handleClose }) {
             <Button color="error" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="contained" color="primary">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={async () => {
+                changeLoading(true);
+                try {
+                  if (
+                    uid &&
+                    dataSet.firstName &&
+                    dataSet.lastName &&
+                    dataSet.firstMark &&
+                    dataSet.secondMark &&
+                    dataSet.thirdMark &&
+                    dataSet.fourthMark
+                  ) {
+                    const res = await putRequest(`/student/${uid}/update`, {
+                      nom: dataSet.firstName,
+                      prenom: dataSet.lastName,
+                      moyS1: dataSet.firstMark,
+                      moyS2: dataSet.secondMark,
+                      moyS3: dataSet.thirdMark,
+                      moyS4: dataSet.fourthMark,
+                    });
+
+                    if (res.status == 200) {
+                      changeAlert(true, "success");
+                    } else {
+                      changeAlert(true, "filled");
+                    }
+                  } else {
+                    changeAlert(true, "warning");
+                  }
+                } catch (err) {
+                  console.log(err);
+                }
+                handleClose();
+                changeLoading(false);
+              }}
+            >
               edit
             </Button>
           </Stack>

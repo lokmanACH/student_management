@@ -38,6 +38,7 @@ const currencies = [
 ];
 
 export default function EditSpecialty({ open, handleClose }) {
+  const [dataSet, setData] = React.useState({});
   return (
     <div>
       {/* <Button onClick={handleOpen}>Open modal</Button> */}
@@ -63,6 +64,10 @@ export default function EditSpecialty({ open, handleClose }) {
                   defaultValue="EUR"
                   helperText="Please select your specialty"
                   variant="standard"
+                  onChange={(e) => {
+                    dataSet.newChoice = e.target.value;
+                    setData(dataSet);
+                  }}
                 >
                   {currencies.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -78,7 +83,13 @@ export default function EditSpecialty({ open, handleClose }) {
             <Button color="error" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="contained" color="primary">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                console.log(dataSet);
+              }}
+            >
               submit
             </Button>
           </Stack>
