@@ -8,6 +8,7 @@ export default function AddStudent({
   changeLoading,
   data,
   changeData,
+  giveMeNew
 }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -31,6 +32,7 @@ export default function AddStudent({
         changeLoading={changeLoading}
         data={data}
         changeData={changeData}
+        giveMeNew={giveMeNew}
       />
     </>
   );

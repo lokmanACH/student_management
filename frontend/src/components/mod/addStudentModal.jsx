@@ -34,6 +34,7 @@ export default function AddStudentModal({
   changeLoading,
   data,
   changeData,
+  giveMeNew
 }) {
   const [dataSet, setData] = React.useState({});
   const currencies =
@@ -270,7 +271,13 @@ export default function AddStudentModal({
                     dataSet.firstChoice &&
                     dataSet.secondChoice &&
                     dataSet.thirdChoice &&
-                    dataSet.fourthChoice
+                    dataSet.fourthChoice &&
+                    dataSet.firstChoice !== dataSet.secondChoice &&
+                    dataSet.firstChoice !== dataSet.thirdChoice &&
+                    dataSet.firstChoice !== dataSet.fourthChoice &&
+                    dataSet.secondChoice !== dataSet.thirdChoice &&
+                    dataSet.secondChoice !== dataSet.fourthChoice &&
+                    dataSet.thirdChoice !== dataSet.fourthChoice
                   ) {
                     const res = await postRequest("/student/add", {
                       numE: dataSet.uid,
@@ -312,6 +319,7 @@ export default function AddStudentModal({
                   } else {
                     changeAlert(true, "warning");
                   }
+                  giveMeNew()
                 } catch (err) {
                   console.log(err);
                 }

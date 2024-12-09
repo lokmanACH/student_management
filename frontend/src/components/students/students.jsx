@@ -23,7 +23,6 @@ import EditSpecialty from "../mod/editSpecialty";
 import "./student.css";
 import { getSpecialtyByNum } from "../../../func/filterSpecialitys";
 import { deleteRequest } from "../../../API/request";
-// /student/2121.../delete
 
 function Row(props) {
   const {
@@ -34,6 +33,7 @@ function Row(props) {
     changeLoading,
     data,
     changeData,
+    giveMeNew,
   } = props;
 
   const [open, setOpen] = React.useState(false);
@@ -88,6 +88,7 @@ function Row(props) {
                   changeAlert(true, "filled");
                 }
                 changeLoading(false);
+                giveMeNew();
               }}
             >
               <IconButton>
@@ -130,7 +131,12 @@ function Row(props) {
                           {
                             <Tooltip title="Edit">
                               <IconButton
-                                onClick={() => {
+                                onClick={async () => {
+                                  data.uid = row.numE;
+                                  data.numSpec = e.numSpec;
+                                  data.ordreChoix = e.ordreChoix;
+                                  data.oldChoix = row.choices;
+                                  await changeData(data);
                                   handleOpen2();
                                 }}
                               >
@@ -171,7 +177,12 @@ Row.propTypes = {
 };
 
 export default function Students(props) {
-  const { changeAlert, changeLoading, data, changeData } = props;
+  const [filter, setFilter] = React.useState("");
+  const changeFilter = (str) => {
+    setFilter(str);
+  };
+
+  const { changeAlert, changeLoading, data, changeData, giveMeNew } = props;
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -183,12 +194,13 @@ export default function Students(props) {
   return (
     <>
       <div className="upTable">
-        <SearchBar />
+        <SearchBar changeFilter={changeFilter} />
         <AddStudent
           changeAlert={changeAlert}
           changeLoading={changeLoading}
           data={data}
           changeData={changeData}
+          giveMeNew={giveMeNew}
         />
         <div className="addButton"></div>
       </div>
@@ -208,18 +220,24 @@ export default function Students(props) {
           </TableHead>
           <TableBody>
             {data?.students &&
-              data?.students.map((row) => (
-                <Row
-                  key={row.numE}
-                  row={row}
-                  handleOpen={handleOpen}
-                  handleOpen2={handleOpen2}
-                  changeAlert={changeAlert}
-                  changeLoading={changeLoading}
-                  data={data}
-                  changeData={changeData}
-                />
-              ))}
+              data?.students
+                .filter((row) =>
+                  new RegExp(`^${filter}.*`).test(row.nom + " " + row.prenom)
+                )
+                .map((row) => (
+                  <Row
+                    key={row.numE}
+                    row={row}
+                    handleOpen={handleOpen}
+                    handleOpen2={handleOpen2}
+                    changeAlert={changeAlert}
+                    changeLoading={changeLoading}
+                    data={data}
+                    changeData={changeData}
+                    giveMeNew={giveMeNew}
+                    filter={filter}
+                  />
+                ))}
           </TableBody>
         </Table>
       </TableContainer>
@@ -229,8 +247,16 @@ export default function Students(props) {
         uid={data.uid}
         changeAlert={changeAlert}
         changeLoading={changeLoading}
+        giveMeNew={giveMeNew}
       />
-      <EditSpecialty open={open2} handleClose={handleClose2} />
+      <EditSpecialty
+        open={open2}
+        handleClose={handleClose2}
+        changeAlert={changeAlert}
+        changeLoading={changeLoading}
+        giveMeNew={giveMeNew}
+        data={data}
+      />
     </>
   );
 }

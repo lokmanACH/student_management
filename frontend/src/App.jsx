@@ -70,6 +70,11 @@ export default function App(props) {
   const changeData = (dt) => {
     setData(dt);
   };
+
+  const [doIt, setDoIt] = React.useState(false);
+  const giveMeNew = () => {
+    setDoIt(!doIt);
+  };
   React.useEffect(() => {
     const doAsyncFunc = async () => {
       //
@@ -84,7 +89,7 @@ export default function App(props) {
     };
 
     doAsyncFunc();
-  }, [/*data*/]);
+  }, [/*data*/ doIt]);
 
   const router = useDemoRouter("/students");
   // Remove this const when copying and pasting into your project.
@@ -107,6 +112,7 @@ export default function App(props) {
                   changeLoading={changeLoading}
                   data={data}
                   changeData={changeData}
+                  giveMeNew={giveMeNew}
                 />
               </PageContainer>
             </DashboardLayout>
@@ -131,6 +137,7 @@ export default function App(props) {
                   changeLoading={changeLoading}
                   data={data}
                   changeData={changeData}
+                  giveMeNew={giveMeNew}
                 />
               </PageContainer>
             </DashboardLayout>
@@ -155,6 +162,7 @@ export default function App(props) {
                   changeLoading={changeLoading}
                   data={data}
                   changeData={changeData}
+                  giveMeNew={giveMeNew}
                 />
               </PageContainer>
             </DashboardLayout>

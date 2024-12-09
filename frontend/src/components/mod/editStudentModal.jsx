@@ -29,6 +29,7 @@ export default function EditStudentModal({
   uid,
   changeAlert,
   changeLoading,
+  giveMeNew,
 }) {
   const [dataSet, setData] = React.useState({});
   return (
@@ -176,6 +177,7 @@ export default function EditStudentModal({
                   } else {
                     changeAlert(true, "warning");
                   }
+                  giveMeNew()
                 } catch (err) {
                   console.log(err);
                 }

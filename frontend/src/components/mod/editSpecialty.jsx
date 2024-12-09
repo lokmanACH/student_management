@@ -5,6 +5,7 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import { putRequest } from "../../../API/request";
 
 const style = {
   position: "absolute",
@@ -18,27 +19,20 @@ const style = {
   p: 4,
 };
 
-const currencies = [
-  {
-    value: "gl",
-    label: "GL",
-  },
-  {
-    value: "ti",
-    label: "TI",
-  },
-  {
-    value: "sci",
-    label: "SCI",
-  },
-  {
-    value: "si",
-    label: "SI",
-  },
-];
-
-export default function EditSpecialty({ open, handleClose }) {
+export default function EditSpecialty({
+  open,
+  handleClose,
+  changeAlert,
+  changeLoading,
+  giveMeNew,
+  data,
+}) {
   const [dataSet, setData] = React.useState({});
+  const currencies =
+    data?.speciality?.map((spec) => ({
+      value: spec.numSpec,
+      label: spec?.nomSpec?.toUpperCase() ?? null,
+    })) || [];
   return (
     <div>
       {/* <Button onClick={handleOpen}>Open modal</Button> */}
@@ -86,8 +80,38 @@ export default function EditSpecialty({ open, handleClose }) {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => {
-                console.log(dataSet);
+              onClick={async () => {
+                const foundItem = data.oldChoix?.find(
+                  (spec) => spec.numSpec === dataSet?.newChoice
+                );
+
+                if (foundItem && foundItem.numSpec != data.numSpec) {
+                  // switching the orders
+                  const obj = [
+                    {
+                      numE: data?.uid,
+                      numSpec: dataSet?.newChoice,
+                      ordreChoix: data?.ordreChoix,
+                    },
+                    {
+                      numE: data?.uid,
+                      numSpec: data?.numSpec,
+                      ordreChoix: foundItem?.ordreChoix,
+                    },
+                  ];
+
+                  const res = await putRequest(`/choice/updateAll`, obj);
+
+                  if (res.status == 200) {
+                    changeAlert(true, "success");
+                  } else {
+                    changeAlert(true, "filled");
+                  }
+                } else {
+                  changeAlert(true, "success");
+                }
+                handleClose();
+                giveMeNew();
               }}
             >
               submit
