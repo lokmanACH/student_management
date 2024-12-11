@@ -13,6 +13,7 @@ import IconButton from "@mui/material/IconButton";
 import AddSpeciality from "../addStudent/addSpeciality";
 import EditSpecialty from "../mod/editSpecialty";
 import EditSpecialtyInfo from "../mod/editSpecialtyInfo";
+import { deleteRequest } from "../../../API/request";
 import "./speciality.css";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -35,27 +36,26 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-];
-
-export default function Speciality(props) {
-  const { changeAlert, changeLoading } = props;
+export default function Speciality({
+  changeAlert,
+  changeLoading,
+  data,
+  changeData,
+  giveMeNew,
+}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   return (
     <>
       <div className="upTable">
-        <AddSpeciality />
+        <AddSpeciality
+          changeAlert={changeAlert}
+          changeLoading={changeLoading}
+          data={data}
+          changeData={changeData}
+          giveMeNew={giveMeNew}
+        />
         <div className="addButton"></div>
       </div>
       <TableContainer component={Paper}>
@@ -69,19 +69,42 @@ export default function Speciality(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <StyledTableRow key={row.name}>
+            {data?.speciality?.map((row) => (
+              <StyledTableRow key={row.numSpec}>
                 <StyledTableCell component="th" scope="row">
-                  {row.name}
+                  {row.nomSpec}
                 </StyledTableCell>
-                <StyledTableCell align="center">{row.calories}</StyledTableCell>
                 <StyledTableCell align="center">
-                  <IconButton onClick={handleOpen}>
+                  {row.nbrPlaces}
+                </StyledTableCell>
+                <StyledTableCell align="center">
+                  <IconButton
+                    onClick={() => {
+                      data.specID = row.numSpec;
+                      changeData(data);
+                      handleOpen();
+                    }}
+                  >
                     <EditIcon />
                   </IconButton>
                 </StyledTableCell>
                 <StyledTableCell align="center">
-                  <IconButton>
+                  <IconButton
+                    onClick={async () => {
+                      changeLoading(true);
+                      const res = await deleteRequest(
+                        `/speciality/${row.numSpec}/delete`
+                      );
+
+                      if (res.status == 200) {
+                        changeAlert(true, "success");
+                      } else {
+                        changeAlert(true, "filled");
+                      }
+                      giveMeNew();
+                      changeLoading(false);
+                    }}
+                  >
                     <DeleteIcon />
                   </IconButton>
                 </StyledTableCell>
@@ -90,7 +113,15 @@ export default function Speciality(props) {
           </TableBody>
         </Table>
       </TableContainer>
-      <EditSpecialtyInfo open={open} handleClose={handleClose} />
+      <EditSpecialtyInfo
+        open={open}
+        handleClose={handleClose}
+        changeAlert={changeAlert}
+        changeLoading={changeLoading}
+        data={data}
+        changeData={changeData}
+        giveMeNew={giveMeNew}
+      />
     </>
   );
 }

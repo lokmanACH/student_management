@@ -13,6 +13,7 @@ import IconButton from "@mui/material/IconButton";
 import AddSpeciality from "../addStudent/addSpeciality";
 import EditStudentModal from "../mod/editStudentModal";
 import EditSpecialty from "../mod/editSpecialty";
+import { getSpecialtyByNum } from "../../../func/filterSpecialitys";
 import "./finalResult.css";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -35,20 +36,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-];
-
-export default function FinalResult(props) {
-  const { changeAlert, changeLoading } = props;
+export default function FinalResult({
+  changeAlert,
+  changeLoading,
+  data,
+  changeData,
+  giveMeNew,
+}) {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -56,6 +50,7 @@ export default function FinalResult(props) {
           <TableRow>
             <StyledTableCell align="left">Order</StyledTableCell>
             <StyledTableCell>Student</StyledTableCell>
+            <StyledTableCell align="center">moyenne general</StyledTableCell>
             <StyledTableCell align="center">1st choice</StyledTableCell>
             <StyledTableCell align="center">2nd choice</StyledTableCell>
             <StyledTableCell align="center">3rd choice</StyledTableCell>
@@ -64,19 +59,42 @@ export default function FinalResult(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <StyledTableRow key={row.name}>
-              <StyledTableCell align="center">51</StyledTableCell>
-              <StyledTableCell component="th" scope="row">
-                {row.name}
-              </StyledTableCell>
-              <StyledTableCell align="center">{row.calories}</StyledTableCell>
-              <StyledTableCell align="center">{row.calories}</StyledTableCell>
-              <StyledTableCell align="center">{row.calories}</StyledTableCell>
-              <StyledTableCell align="center">{row.calories}</StyledTableCell>
-              <StyledTableCell align="center">{row.calories}</StyledTableCell>
-            </StyledTableRow>
-          ))}
+          {data?.students
+            .sort((a, b) => b.moyGeneral - a.moyGeneral)
+            .map((row, i) => (
+              <StyledTableRow key={row.numE}>
+                <StyledTableCell align="center">{i + 1}</StyledTableCell>
+                <StyledTableCell component="th" scope="row">
+                  {row.nom} {row.prenom}
+                </StyledTableCell>
+                <StyledTableCell align="center">
+                  {row.moyGeneral}
+                </StyledTableCell>
+                {row.choices
+                  .sort((a, b) => a.ordreChoix - b.ordreChoix)
+                  .map((e) => (
+                    <StyledTableCell align="center">
+                      {getSpecialtyByNum(
+                        data?.speciality ?? null,
+                        e?.numSpec ?? null
+                      )?.nomSpec ?? null}
+                    </StyledTableCell>
+                  ))}
+
+                <StyledTableCell
+                  align="center"
+                  sx={{
+                    backgroundColor: (theme) =>
+                      theme.palette.mode === "dark" ? "#620160 " : "#bce4ff",
+                  }}
+                >
+                  {getSpecialtyByNum(
+                    data?.speciality ?? null,
+                    row?.result ?? null
+                  )?.nomSpec ?? null}
+                </StyledTableCell>
+              </StyledTableRow>
+            ))}
         </TableBody>
       </Table>
     </TableContainer>

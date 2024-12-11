@@ -81,6 +81,83 @@ export default function App(props) {
       const res = await getRequest(`/student/all`);
       const resSpec = await getRequest(`/speciality/all`);
       if (res.status == 200 && resSpec.status == 200) {
+        resSpec.result.map((row) => {
+          row.remainPlaces = row.nbrPlaces;
+        });
+
+        // For first choice
+        res.result
+          .sort((a, b) => b.moyGeneral - a.moyGeneral)
+          .map((row) => {
+            row.choices = row.choices.sort(
+              (a, b) => a.ordreChoix - b.ordreChoix
+            );
+
+            //  get final result of each student
+            var cbn = false;
+
+            // numSpec
+            // For first choice
+            resSpec.result.forEach((e) => {
+              if (row.choices[0].numSpec === e.numSpec) {
+                if (e.remainPlaces > 0) {
+                  e.remainPlaces -= 1;
+                  row.result = e.numSpec;
+                  cbn = false;
+                } else {
+                  cbn = true;
+                }
+              }
+            });
+
+            // For second choice
+            if (cbn) {
+              resSpec.result.forEach((e) => {
+                if (row.choices[1].numSpec === e.numSpec) {
+                  if (e.remainPlaces > 0) {
+                    e.remainPlaces -= 1;
+                    row.result = e.numSpec;
+                    cbn = false;
+                  } else {
+                    cbn = true;
+                  }
+                }
+              });
+            }
+
+            // For third choice
+            if (cbn) {
+              resSpec.result.forEach((e) => {
+                if (row.choices[2].numSpec === e.numSpec) {
+                  if (e.remainPlaces > 0) {
+                    e.remainPlaces -= 1;
+                    row.result = e.numSpec;
+                    cbn = false;
+                  } else {
+                    cbn = true;
+                  }
+                }
+              });
+            }
+
+            // For fourth choice
+            if (cbn) {
+              resSpec.result.forEach((e) => {
+                if (row.choices[3].numSpec === e.numSpec) {
+                  if (e.remainPlaces > 0) {
+                    e.remainPlaces -= 1;
+                    row.result = e.numSpec;
+                    cbn = false;
+                  } else {
+                    cbn = true;
+                  }
+                }
+              });
+            }
+          });
+
+console.log(res.result);
+        // end
         changeData({
           students: res.result,
           speciality: resSpec.result,
@@ -89,7 +166,7 @@ export default function App(props) {
     };
 
     doAsyncFunc();
-  }, [/*data*/ doIt]);
+  }, [doIt]);
 
   const router = useDemoRouter("/students");
   // Remove this const when copying and pasting into your project.

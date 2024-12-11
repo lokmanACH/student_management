@@ -13,6 +13,7 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import { putRequest } from "../../../API/request";
 
 const style = {
   position: "absolute",
@@ -26,7 +27,15 @@ const style = {
   p: 4,
 };
 
-export default function EditSpecialtyInfo({ open, handleClose }) {
+export default function EditSpecialtyInfo({
+  open,
+  handleClose,
+  changeAlert,
+  changeLoading,
+  data,
+  changeData,
+  giveMeNew,
+}) {
   const [dataSet, setData] = React.useState({});
   return (
     <div>
@@ -74,8 +83,24 @@ export default function EditSpecialtyInfo({ open, handleClose }) {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => {
-                console.log(dataSet);
+              onClick={async () => {
+                changeLoading(true);
+                const res = await putRequest(
+                  `/speciality/${data?.specID ?? null}/update`,
+                  {
+                    nomSpec: dataSet.specialityName,
+                    nbrPlaces: Number(dataSet.specialityPlaceNumber),
+                  }
+                );
+                if (res.status == 200) {
+                  changeAlert(true, "success");
+                } else {
+                  changeAlert(true, "filled");
+                }
+
+                changeLoading(false);
+                giveMeNew();
+                handleClose();
               }}
             >
               edit

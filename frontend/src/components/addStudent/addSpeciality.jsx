@@ -4,7 +4,13 @@ import AddIcon from "@mui/icons-material/Add";
 import AddStudentModal from "../mod/addStudentModal";
 import AddSpecialityModal from "../mod/addSpecialityModal";
 
-export default function AddSpeciality() {
+export default function AddSpeciality({
+  changeAlert,
+  changeLoading,
+  data,
+  changeData,
+  giveMeNew,
+}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -20,7 +26,15 @@ export default function AddSpeciality() {
       >
         Add New Speciality
       </Button>
-      <AddSpecialityModal open={open} handleClose={handleClose} />
+      <AddSpecialityModal
+        open={open}
+        handleClose={handleClose}
+        changeAlert={changeAlert}
+        changeLoading={changeLoading}
+        data={data}
+        changeData={changeData}
+        giveMeNew={giveMeNew}
+      />
     </>
   );
 }

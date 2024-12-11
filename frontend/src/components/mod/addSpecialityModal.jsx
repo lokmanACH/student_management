@@ -13,6 +13,7 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import { postRequest } from "../../../API/request";
 
 const style = {
   position: "absolute",
@@ -26,11 +27,18 @@ const style = {
   p: 4,
 };
 
-export default function AddSpecialityModal({ open, handleClose }) {
+export default function AddSpecialityModal({
+  open,
+  handleClose,
+  changeAlert,
+  changeLoading,
+  data,
+  changeData,
+  giveMeNew,
+}) {
   const [dataSet, setData] = React.useState({});
   return (
     <div>
-      {/* <Button onClick={handleOpen}>Open modal</Button> */}
       <Modal
         open={open}
         onClose={handleClose}
@@ -74,8 +82,24 @@ export default function AddSpecialityModal({ open, handleClose }) {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => {
-                console.log(dataSet);
+              onClick={async () => {
+                changeLoading(true);
+                if (dataSet.specialityName && dataSet.specialityPlaceNumber) {
+                  const res = await postRequest("/speciality/add", {
+                    nomSpec: dataSet.specialityName,
+                    nbrPlaces: Number(dataSet.specialityPlaceNumber),
+                  });
+
+                  if (res.status == 200) {
+                    changeAlert(true, "success");
+                  } else {
+                    changeAlert(true, "filled");
+                  }
+                }
+
+                giveMeNew();
+                changeLoading(false);
+                handleClose();
               }}
             >
               submit

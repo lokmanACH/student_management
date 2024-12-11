@@ -24,17 +24,17 @@ import "./student.css";
 import { getSpecialtyByNum } from "../../../func/filterSpecialitys";
 import { deleteRequest } from "../../../API/request";
 
-function Row(props) {
-  const {
-    row,
-    handleOpen,
-    handleOpen2,
-    changeAlert,
-    changeLoading,
-    data,
-    changeData,
-    giveMeNew,
-  } = props;
+function Row({
+  row,
+  handleOpen,
+  handleOpen2,
+  changeAlert,
+  changeLoading,
+  data,
+  changeData,
+  giveMeNew,
+}) {
+
 
   const [open, setOpen] = React.useState(false);
   return (
