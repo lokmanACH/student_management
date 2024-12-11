@@ -11,10 +11,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import AddSpeciality from "../addStudent/addSpeciality";
-import EditSpecialty from "../mod/editSpecialty";
 import EditSpecialtyInfo from "../mod/editSpecialtyInfo";
 import { deleteRequest } from "../../../API/request";
 import "./speciality.css";
+import Asking from "../asking/asking";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -46,6 +46,16 @@ export default function Speciality({
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  // for confirmation
+  const [openDeleteConfirm, setOpenDeleteConfirm] = React.useState(false);
+
+  const handleClickOpenDeleteConfirm = () => {
+    setOpenDeleteConfirm(true);
+  };
+  const handleCloseDeleteConfirm = () => {
+    setOpenDeleteConfirm(false);
+  };
   return (
     <>
       <div className="upTable">
@@ -91,18 +101,9 @@ export default function Speciality({
                 <StyledTableCell align="center">
                   <IconButton
                     onClick={async () => {
-                      changeLoading(true);
-                      const res = await deleteRequest(
-                        `/speciality/${row.numSpec}/delete`
-                      );
-
-                      if (res.status == 200) {
-                        changeAlert(true, "success");
-                      } else {
-                        changeAlert(true, "filled");
-                      }
-                      giveMeNew();
-                      changeLoading(false);
+                      data.url = `/speciality/${row.numSpec}/delete`;
+                      changeData(data);
+                      handleClickOpenDeleteConfirm();
                     }}
                   >
                     <DeleteIcon />
@@ -121,6 +122,15 @@ export default function Speciality({
         data={data}
         changeData={changeData}
         giveMeNew={giveMeNew}
+      />
+
+      <Asking
+        handleClose={handleCloseDeleteConfirm}
+        open={openDeleteConfirm}
+        changeAlert={changeAlert}
+        changeLoading={changeLoading}
+        giveMeNew={giveMeNew}
+        data={data}
       />
     </>
   );

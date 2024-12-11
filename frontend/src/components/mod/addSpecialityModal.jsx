@@ -1,20 +1,12 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
-import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
-import TextField from "@mui/material/TextField";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import { Divider } from "@mui/material";
-import BadgeIcon from "@mui/icons-material/Badge";
-import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { postRequest } from "../../../API/request";
-
 const style = {
   position: "absolute",
   top: "50%",

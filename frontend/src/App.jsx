@@ -6,12 +6,9 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
-import Grid from "@mui/material/Grid2";
 import Students from "./components/students/students";
 import Speciality from "./components/specialty/speciality";
 import FinalResult from "./components/finaleResult/finalResult";
-import Loading from "./loading";
-import Alerts from "./alert";
 import { getRequest } from "../API/request";
 
 const NAVIGATION = [
@@ -156,7 +153,6 @@ export default function App(props) {
             }
           });
 
-console.log(res.result);
         // end
         changeData({
           students: res.result,

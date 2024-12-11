@@ -23,6 +23,7 @@ import EditSpecialty from "../mod/editSpecialty";
 import "./student.css";
 import { getSpecialtyByNum } from "../../../func/filterSpecialitys";
 import { deleteRequest } from "../../../API/request";
+import Asking from "../asking/asking";
 
 function Row({
   row,
@@ -33,9 +34,8 @@ function Row({
   data,
   changeData,
   giveMeNew,
+  handleClickOpenDeleteConfirm,
 }) {
-
-
   const [open, setOpen] = React.useState(false);
   return (
     <React.Fragment>
@@ -77,18 +77,10 @@ function Row({
             <Tooltip
               title="Edit"
               onClick={async () => {
-                changeLoading(true);
-                const res = await deleteRequest(
-                  `/student/${row.numE}/delete`,
-                  null
-                );
-                if (res.status == 200) {
-                  changeAlert(true, "success");
-                } else {
-                  changeAlert(true, "filled");
-                }
-                changeLoading(false);
-                giveMeNew();
+                data.deleteUID = row.numE;
+                data.url = `/student/${row.numE}/delete`;
+                changeData(data);
+                handleClickOpenDeleteConfirm();
               }}
             >
               <IconButton>
@@ -191,6 +183,17 @@ export default function Students(props) {
   const handleOpen2 = () => setOpen2(true);
   const handleClose2 = () => setOpen2(false);
 
+  // for confirmation
+  const [openDeleteConfirm, setOpenDeleteConfirm] = React.useState(false);
+
+
+  const handleClickOpenDeleteConfirm = () => {
+    setOpenDeleteConfirm(true);
+  };
+  const handleCloseDeleteConfirm = () => {
+    setOpenDeleteConfirm(false);
+  };
+
   return (
     <>
       <div className="upTable">
@@ -236,6 +239,7 @@ export default function Students(props) {
                     changeData={changeData}
                     giveMeNew={giveMeNew}
                     filter={filter}
+                    handleClickOpenDeleteConfirm={handleClickOpenDeleteConfirm}
                   />
                 ))}
           </TableBody>
@@ -257,10 +261,14 @@ export default function Students(props) {
         giveMeNew={giveMeNew}
         data={data}
       />
+      <Asking
+        handleClose={handleCloseDeleteConfirm}
+        open={openDeleteConfirm}
+        changeAlert={changeAlert}
+        changeLoading={changeLoading}
+        giveMeNew={giveMeNew}
+        data={data}
+      />
     </>
   );
 }
-
-// numE: 1
-// numSpec: 1
-// ordreChoix: 3

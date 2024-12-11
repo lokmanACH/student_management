@@ -1,7 +1,6 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
-import AddStudentModal from "../mod/addStudentModal";
 import AddSpecialityModal from "../mod/addSpecialityModal";
 
 export default function AddSpeciality({
